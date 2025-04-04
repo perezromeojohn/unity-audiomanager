@@ -26,7 +26,7 @@ namespace RumyooAudioManager
             }
         }
 
-        public Sound[] musicSound, sfxSound;
+        public Sound[] backgroundSound, effectsSound;
         public AudioSource musicSource;
         public AudioMixer audioMixer;
         public int SFXPoolValue = 10; // amount of sfx that can be played at the same time, we instantiate them at the start of the game
@@ -67,7 +67,7 @@ namespace RumyooAudioManager
 
         public void PlayMusic(string musicName)
         {
-            Sound s = Array.Find(musicSound, sound => sound.name == musicName);
+            Sound s = Array.Find(backgroundSound, sound => sound.name == musicName);
 
             if (s == null)
             {
@@ -82,7 +82,7 @@ namespace RumyooAudioManager
 
         public void PlaySFX(string sfxName)
         {
-            Sound s = Array.Find(sfxSound, sound => sound.name == sfxName);
+            Sound s = Array.Find(effectsSound, sound => sound.name == sfxName);
 
             if (s == null)
             {
