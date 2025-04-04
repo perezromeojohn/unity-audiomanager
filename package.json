@@ -1,0 +1,23 @@
+{
+    "name": "com.rumyoonomicon.audiomanager",
+    "version": "1.0.0",
+    "displayName": "Simple Pooling Audio Manager",
+    "description": "A simple audio manager that uses object pooling to manage audio sources efficiently. It allows you to play, stop, and manage audio clips easily without creating and destroying audio sources frequently.",
+    "unity": "2022.1",
+    "keywords": [
+        "audio",
+        "manager",
+        "pooling",
+        "unity",
+        "sound"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/yourusername/audiomanager.git"
+    },
+    "author": {
+        "name": "Rumyooo",
+        "url": "https://rumyoonomicon.itch.io"
+    }
+}
+
