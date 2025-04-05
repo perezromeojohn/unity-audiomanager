@@ -86,6 +86,8 @@ AudioManager.Instance.PlayMusic("Background");
 * [1.0.1](CHANGELOG.md)
     * Added documentation for ReadMe and Changelog.
     * Fixed minor bugs in the AudioManager script.
+* [1.0.2](CHANGELOG.md)
+    * Removed default playmusic BGM and SFX from the AudioManager script.
 
 ## Acknowledgments
 

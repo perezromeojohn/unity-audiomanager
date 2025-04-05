@@ -8,3 +8,7 @@
 ### Minor Patches
 - Added documentation for ReadMe and Changelog.
 - Fixed minor bugs in the AudioManager script.
+
+## [1.0.2] - 2025-05-04
+### Minor Patches
+- Removed default playmusic BGM and SFX from the AudioManager script.

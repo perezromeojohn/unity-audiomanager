@@ -36,8 +36,6 @@ namespace RumyooAudioManager
 
         void Start()
         {
-            PlayMusic("SlimeBG");
-
             SetMusicVolume(PlayerPrefs.GetFloat("MusicVolume", 1));
             SetSFXVolume(PlayerPrefs.GetFloat("SFXVolume", 1));
             MuteMusic(PlayerPrefs.GetInt("MusicMuted", 0) == 1);
