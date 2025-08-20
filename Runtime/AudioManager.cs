@@ -32,6 +32,9 @@ namespace RumyooAudioManager
         public int SFXPoolValue = 10; // amount of sfx that can be played at the same time, we instantiate them at the start of the game
         public AudioMixerGroup musicMixerGroup, sfxMixerGroup;
 
+        // music
+        private Coroutine musicFadeCoroutine;
+
         private List<AudioSource> sfxPool = new List<AudioSource>();
 
         void Start()
@@ -63,9 +66,9 @@ namespace RumyooAudioManager
             }
         }
 
-        public void PlayMusic(string musicName)
+        public void PlayMusic(string musicName, float musicFadeDuration = 1.5f)
         {
-            Sound s = Array.Find(backgroundSound, sound => sound.name == musicName);
+            Sound s = Array.Find(backgroundSound, sound => sound.clip.name == musicName);
 
             if (s == null)
             {
@@ -73,14 +76,39 @@ namespace RumyooAudioManager
             }
             else
             {
-                musicSource.clip = s.clip;
-                musicSource.Play();
+                if (musicFadeCoroutine != null)
+                    StopCoroutine(musicFadeCoroutine);
+
+                musicFadeCoroutine = StartCoroutine(CrossfadeMusic(s.clip, musicFadeDuration));
             }
+        }
+
+        private IEnumerator CrossfadeMusic(AudioClip newClip, float duration)
+        {
+            if (musicSource.clip == newClip)
+                yield break;
+
+            float startVolume = musicSource.volume;
+            for (float t = 0; t < duration; t += Time.unscaledDeltaTime)
+            {
+                musicSource.volume = Mathf.Lerp(startVolume, 0, t / duration);
+                yield return null;
+            }
+            musicSource.volume = 0;
+            musicSource.clip = newClip;
+            musicSource.Play();
+
+            for (float t = 0; t < duration; t += Time.unscaledDeltaTime)
+            {
+                musicSource.volume = Mathf.Lerp(0, startVolume, t / duration);
+                yield return null;
+            }
+            musicSource.volume = startVolume;
         }
 
         public void PlaySFX(string sfxName)
         {
-            Sound s = Array.Find(effectsSound, sound => sound.name == sfxName);
+            Sound s = Array.Find(effectsSound, sound => sound.clip.name == sfxName);
 
             if (s == null)
             {

@@ -43,10 +43,10 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -4571821208160386473, guid: 4a606b65a48f631418bfbdffbafd4eed, type: 2}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -174,8 +174,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98e0bd604bfcf2346a700854601e887c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  musicSound: []
-  sfxSound: []
+  backgroundSound: []
+  effectsSound: []
   musicSource: {fileID: 7460320622026915542}
   audioMixer: {fileID: 24100000, guid: 4a606b65a48f631418bfbdffbafd4eed, type: 2}
   SFXPoolValue: 10
@@ -224,7 +224,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -3953793844419226816, guid: 4a606b65a48f631418bfbdffbafd4eed, type: 2}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
