@@ -66,6 +66,8 @@ namespace RumyooAudioManager
             }
         }
 
+        // Music
+
         public void PlayMusic(string musicName, float musicFadeDuration = 1.5f)
         {
             Sound s = Array.Find(backgroundSound, sound => sound.clip.name == musicName);
@@ -105,6 +107,83 @@ namespace RumyooAudioManager
             }
             musicSource.volume = startVolume;
         }
+
+        public void PauseMusic(float fadeDuration = 0.5f)
+        {
+            if (musicSource.isPlaying)
+            {
+                if (musicFadeCoroutine != null)
+                    StopCoroutine(musicFadeCoroutine);
+
+                musicFadeCoroutine = StartCoroutine(FadeOutAndPause(fadeDuration));
+            }
+        }
+
+        private IEnumerator FadeOutAndPause(float duration)
+        {
+            float startVolume = musicSource.volume;
+            for (float t = 0; t < duration; t += Time.unscaledDeltaTime)
+            {
+                musicSource.volume = Mathf.Lerp(startVolume, 0, t / duration);
+                yield return null;
+            }
+            musicSource.volume = 0;
+            musicSource.Pause();
+        }
+
+        public void StopMusic(float fadeDuration = 0.5f)
+        {
+            if (musicSource.isPlaying)
+            {
+                if (musicFadeCoroutine != null)
+                    StopCoroutine(musicFadeCoroutine);
+
+                musicFadeCoroutine = StartCoroutine(FadeOutAndStop(fadeDuration));
+            }
+            else
+            {
+                musicSource.clip = null;
+            }
+        }
+
+        private IEnumerator FadeOutAndStop(float duration)
+        {
+            float startVolume = musicSource.volume;
+            for (float t = 0; t < duration; t += Time.unscaledDeltaTime)
+            {
+                musicSource.volume = Mathf.Lerp(startVolume, 0, t / duration);
+                yield return null;
+            }
+            musicSource.volume = 0;
+            musicSource.Stop();
+            musicSource.clip = null;
+        }
+
+        public void ResumeMusic(float fadeDuration = 0.5f)
+        {
+            if (musicSource.clip != null)
+            {
+                if (musicFadeCoroutine != null)
+                    StopCoroutine(musicFadeCoroutine);
+
+                musicSource.Play();
+                musicFadeCoroutine = StartCoroutine(FadeInMusic(fadeDuration));
+            }
+        }
+
+        private IEnumerator FadeInMusic(float duration)
+        {
+            float targetVolume = 1f;
+            musicSource.volume = 0;
+            for (float t = 0; t < duration; t += Time.unscaledDeltaTime)
+            {
+                musicSource.volume = Mathf.Lerp(0, targetVolume, t / duration);
+                yield return null;
+            }
+            musicSource.volume = targetVolume;
+        }
+
+        // SFX
 
         public void PlaySFX(string sfxName)
         {

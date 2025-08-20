@@ -12,3 +12,9 @@
 ## [1.0.2] - 2025-05-04
 ### Minor Patches
 - Removed default playmusic BGM and SFX from the AudioManager script.
+
+## [1.0.3] - 2025-08-20
+### Minor Patches
+- Added support for music fade duration in PlayMusic method.
+- Added more methods for the Music management. (Pause, Resume, Stop)
+- Cleaned up unused code and comments.
