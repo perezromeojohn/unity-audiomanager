@@ -26,7 +26,8 @@ namespace RumyooAudioManager
             }
         }
 
-        public Sound[] backgroundSound, effectsSound;
+        // public Sound[] backgroundSound, effectsSound;
+        public AudioClip[] backgroundClips, effectClips;
         public AudioSource musicSource;
         public AudioMixer audioMixer;
         public int SFXPoolValue = 10; // amount of sfx that can be played at the same time, we instantiate them at the start of the game
@@ -70,9 +71,9 @@ namespace RumyooAudioManager
 
         public void PlayMusic(string musicName, float musicFadeDuration = 1.5f)
         {
-            Sound s = Array.Find(backgroundSound, sound => sound.clip.name == musicName);
+            AudioClip clip = Array.Find(backgroundClips, c => c.name == musicName);
 
-            if (s == null)
+            if (clip == null)
             {
                 Debug.LogWarning("Sound: " + musicName + " not found!");
             }
@@ -81,7 +82,7 @@ namespace RumyooAudioManager
                 if (musicFadeCoroutine != null)
                     StopCoroutine(musicFadeCoroutine);
 
-                musicFadeCoroutine = StartCoroutine(CrossfadeMusic(s.clip, musicFadeDuration));
+                musicFadeCoroutine = StartCoroutine(CrossfadeMusic(clip, musicFadeDuration));
             }
         }
 
@@ -183,13 +184,30 @@ namespace RumyooAudioManager
             musicSource.volume = targetVolume;
         }
 
+        public void InstantStopMusic()
+        {
+            if (musicSource.isPlaying)
+            {
+                musicSource.Stop();
+                musicSource.clip = null;
+            }
+        }
+
+        public void InstantPauseMusic()
+        {
+            if (musicSource.isPlaying)
+            {
+                musicSource.Pause();
+            }
+        }
+
         // SFX
 
         public void PlaySFX(string sfxName)
         {
-            Sound s = Array.Find(effectsSound, sound => sound.clip.name == sfxName);
+            AudioClip clip = Array.Find(effectClips, c => c.name == sfxName);
 
-            if (s == null)
+            if (clip == null)
             {
                 Debug.LogWarning("Sound: " + sfxName + " not found!");
             }
@@ -200,10 +218,10 @@ namespace RumyooAudioManager
                 {
                     freeSource = sfxPool[0];
                 }
-                freeSource.clip = s.clip;
+                freeSource.clip = clip;
                 freeSource.pitch = UnityEngine.Random.Range(.85f, 1.15f);
                 freeSource.Play();
-                StartCoroutine(ClearClip(freeSource, s.clip.length));
+                StartCoroutine(ClearClip(freeSource, clip.length));
             }
         }
 

@@ -17,4 +17,5 @@
 ### Minor Patches
 - Added support for music fade duration in PlayMusic method.
 - Added more methods for the Music management. (Pause, Resume, Stop)
+- Updated the AudioManager script to use AudioClip arrays instead of custom Sound class for easier management.
 - Cleaned up unused code and comments.
