@@ -1,7 +1,7 @@
 {
     "name": "com.rumyoonomicon.audiomanager",
     "version": "1.0.3",
-    "displayName": "Simple Pooling Audio Manager",
+    "displayName": "Rumyoonomicon AudioManager",
     "description": "A simple audio manager that uses object pooling to manage audio sources efficiently. It allows you to play, stop, and manage audio clips easily without creating and destroying audio sources frequently.",
     "unity": "2022.1",
     "keywords": [
@@ -9,15 +9,24 @@
         "manager",
         "pooling",
         "unity",
-        "sound"
+        "sound",
+        "music",
+        "sfx",
+        "crossfade",
+        "bgm",
+        "fade",
+        "performance",
+        "singleton"
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/yourusername/audiomanager.git"
+        "url": "https://github.com/perezromeojohn/unity-audiomanager.git"
     },
     "author": {
         "name": "Rumyooo",
         "url": "https://rumyoonomicon.itch.io"
-    }
+    },
+    "category": "Utilities",
+    "dependencies": {}
 }
 
