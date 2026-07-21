@@ -11,6 +11,7 @@ Supports background music and sound effects with smooth crossfading, fade in/out
 - **Automatic crossfade between music tracks**
 - **SFX pooling for efficient simultaneous playback**
 - **Volume and mute controls for music and SFX (with PlayerPrefs persistence)**
+- **UI-ready properties — drag sliders/toggles straight onto `MusicVolume`, `SFXVolume`, `MusicMuted`, `SFXMuted`**
 - **Random pitch variation for SFX**
 - **Easy integration and extensibility**
 
@@ -76,6 +77,12 @@ AudioManager.Instance.SetSFXVolume(0.5f);
 
 // Mute/unmute SFX
 AudioManager.Instance.MuteSFX(false);
+
+// Or use UI-ready properties (drag Slider/Toggle in Inspector)
+AudioManager.Instance.MusicVolume = 0.8f;
+AudioManager.Instance.MusicMuted = true;
+AudioManager.Instance.SFXVolume = 0.5f;
+AudioManager.Instance.SFXMuted = false;
 ```
 
 ## Customization
@@ -89,6 +96,7 @@ AudioManager.Instance.MuteSFX(false);
 * [1.0.1](CHANGELOG.md) - Documentation and bug fixes
 * [1.0.2](CHANGELOG.md) - Removed default BGM/SFX
 * [1.0.3](CHANGELOG.md) - Added crossfade and fade in/out for music
+* [1.0.4](CHANGELOG.md) - UI-ready volume/mute properties, bug fixes
 
 ## Author
 
