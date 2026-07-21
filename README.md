@@ -85,6 +85,37 @@ AudioManager.Instance.SFXVolume = 0.5f;
 AudioManager.Instance.SFXMuted = false;
 ```
 
+### UI Setup (Sliders & Toggles)
+
+Volume and mute state persists via `PlayerPrefs` across sessions, but sliders/toggles need a one-shot init to show the saved value on startup.
+
+1. **Bind in the Inspector:**
+   - Slider → `onValueChanged` → drag `AudioManager` → `MusicVolume` / `SFXVolume`
+   - Toggle → `onValueChanged` → drag `AudioManager` → `MusicMuted` / `SFXMuted`
+
+2. **Sync visuals on start** — add this to your settings panel:
+
+```csharp
+using UnityEngine;
+using UnityEngine.UI;
+
+public class AudioSettingsUI : MonoBehaviour
+{
+    public Slider musicSlider, sfxSlider;
+    public Toggle musicToggle, sfxToggle;
+
+    void Start()
+    {
+        musicSlider.value = AudioManager.Instance.MusicVolume;
+        musicToggle.isOn = AudioManager.Instance.MusicMuted;
+        sfxSlider.value = AudioManager.Instance.SFXVolume;
+        sfxToggle.isOn = AudioManager.Instance.SFXMuted;
+    }
+}
+```
+
+That's it — values survive quit & rejoin.
+
 ## Customization
 
 - Adjust fade durations and pool size in the inspector.
