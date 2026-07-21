@@ -35,6 +35,7 @@ namespace RumyooAudioManager
 
         // music
         private Coroutine musicFadeCoroutine;
+        private float _musicVolume = 1f, _sfxVolume = 1f;
 
         private List<AudioSource> sfxPool = new List<AudioSource>();
 
@@ -56,6 +57,9 @@ namespace RumyooAudioManager
 
             _instance = this;
             DontDestroyOnLoad(gameObject);
+
+            _musicVolume = PlayerPrefs.GetFloat("MusicVolume", 1);
+            _sfxVolume = PlayerPrefs.GetFloat("SFXVolume", 1);
 
             for (int i = 0; i < SFXPoolValue; i++)
             {
@@ -103,10 +107,10 @@ namespace RumyooAudioManager
 
             for (float t = 0; t < duration; t += Time.unscaledDeltaTime)
             {
-                musicSource.volume = Mathf.Lerp(0, startVolume, t / duration);
+                musicSource.volume = Mathf.Lerp(0, 1f, t / duration);
                 yield return null;
             }
-            musicSource.volume = startVolume;
+            musicSource.volume = 1f;
         }
 
         public void PauseMusic(float fadeDuration = 0.5f)
@@ -221,39 +225,59 @@ namespace RumyooAudioManager
                 freeSource.clip = clip;
                 freeSource.pitch = UnityEngine.Random.Range(.85f, 1.15f);
                 freeSource.Play();
-                StartCoroutine(ClearClip(freeSource, clip.length));
             }
-        }
-
-        private IEnumerator ClearClip(AudioSource source, float duration)
-        {
-            yield return new WaitForSeconds(duration);
-            source.clip = null;
         }
 
         // SFX stuff
         public void SetMusicVolume(float volume)
         {
+            _musicVolume = volume;
             audioMixer.SetFloat("MusicVolume", Mathf.Log10(volume) * 20);
             PlayerPrefs.SetFloat("MusicVolume", volume);
         }
 
         public void SetSFXVolume(float volume)
         {
+            _sfxVolume = volume;
             audioMixer.SetFloat("SFXVolume", Mathf.Log10(volume) * 20);
             PlayerPrefs.SetFloat("SFXVolume", volume);
         }
 
         public void MuteMusic(bool isMuted)
         {
-            audioMixer.SetFloat("MusicVolume", isMuted ? -80 : Mathf.Log10(PlayerPrefs.GetFloat("MusicVolume", 1)) * 20);
+            audioMixer.SetFloat("MusicVolume", isMuted ? -80 : Mathf.Log10(_musicVolume) * 20);
             PlayerPrefs.SetInt("MusicMuted", isMuted ? 1 : 0);
         }
 
         public void MuteSFX(bool isMuted)
         {
-            audioMixer.SetFloat("SFXVolume", isMuted ? -80 : Mathf.Log10(PlayerPrefs.GetFloat("SFXVolume", 1)) * 20);
+            audioMixer.SetFloat("SFXVolume", isMuted ? -80 : Mathf.Log10(_sfxVolume) * 20);
             PlayerPrefs.SetInt("SFXMuted", isMuted ? 1 : 0);
+        }
+
+        // UI bindings — drag sliders/toggles onto these
+        public float MusicVolume
+        {
+            get => _musicVolume;
+            set => SetMusicVolume(value);
+        }
+
+        public bool MusicMuted
+        {
+            get => PlayerPrefs.GetInt("MusicMuted", 0) == 1;
+            set => MuteMusic(value);
+        }
+
+        public float SFXVolume
+        {
+            get => _sfxVolume;
+            set => SetSFXVolume(value);
+        }
+
+        public bool SFXMuted
+        {
+            get => PlayerPrefs.GetInt("SFXMuted", 0) == 1;
+            set => MuteSFX(value);
         }
     }
 }

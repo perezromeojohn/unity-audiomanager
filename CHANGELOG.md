@@ -4,6 +4,17 @@ All notable changes to the Rumyoonomicon AudioManager will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2026-07-21
+
+### Added
+- **UI-Ready Properties**: `MusicVolume`, `MusicMuted`, `SFXVolume`, `SFXMuted` — public properties you can drag sliders/toggles onto. No glue code needed.
+
+### Fixed
+- **CrossfadeMusic**: Fade-in target no longer snaps to 0 when crossfading while muted/paused. Source volume always fades to 1f.
+- **ClearClip Leak**: Removed coroutine that could null a reused AudioSource's clip mid-playback. Pool checks `isPlaying`, not `clip`.
+- **Volume Tracking**: Linear volume cached in fields — mute/unmute no longer reads back from PlayerPrefs, so volume survives mute cycles correctly even if PlayerPrefs is stale.
+- **FadeInMusic**: Now uses cached `_musicVolume` as target instead of hardcoded `1f` (consistent with the rest of the system).
+
 ## [1.0.3] - 2025-08-20
 
 ### Enhanced Music Management
