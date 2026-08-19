@@ -10,15 +10,12 @@ namespace RumyooAudioManager
     public class AudioEntry
     {
         public string name;                          // lookup key: PlayMusic("name") / PlaySFX("name")
-        [ContextMenuItem("Preview", "PreviewClip")]
         public AudioClip clip;
         public bool loop;                            // BGM: true, SFX: false
         [Range(0f, 1f)] public float volume = 1f;    // per-track gain
         [Range(0.1f, 3f)] public float pitch = 1f;   // base pitch
         [Range(0f, 1f)] public float pitchVariation = 0f; // random +/- range applied to pitch (SFX)
         [Range(1, 32)] public int maxConcurrent = 10; // SFX: max simultaneous plays; oldest is cut when exceeded
-
-        public void PreviewClip() => AudioManager.PreviewClip(clip, volume);
     }
 
     public class AudioManager : MonoBehaviour

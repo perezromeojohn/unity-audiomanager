@@ -4,6 +4,15 @@ All notable changes to the Rumyoonomicon AudioManager will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-08-19
+
+### Added
+- **Section Headers in Inspector**: `Background Music` (light blue) and `Sound Effects` (pink) header bars above each clip list.
+- **Preview Button**: Every audio entry in the Inspector now shows a visible **Preview** button next to its clip field — no more right-click menu.
+
+### Fixed
+- **Serialized Data**: Prefab field names updated from legacy `backgroundSound`/`effectsSound` to the current `backgroundClips`/`effectClips`, so entries persist correctly.
+
 ## [1.1.0] - 2026-08-19
 
 ### Added

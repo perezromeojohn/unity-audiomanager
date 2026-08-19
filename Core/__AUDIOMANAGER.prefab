@@ -174,8 +174,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98e0bd604bfcf2346a700854601e887c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  backgroundSound: []
-  effectsSound: []
+  backgroundClips: []
+  effectClips: []
   musicSource: {fileID: 7460320622026915542}
   audioMixer: {fileID: 24100000, guid: 4a606b65a48f631418bfbdffbafd4eed, type: 2}
   SFXPoolValue: 10
