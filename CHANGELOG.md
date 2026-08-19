@@ -4,6 +4,25 @@ All notable changes to the Rumyoonomicon AudioManager will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-08-19
+
+### Added
+- **Per-Entry Audio Settings**: `AudioClip[]` arrays replaced with `AudioEntry[] backgroundClips`/`effectClips`. Each entry has its own:
+  - `loop` — BGM loops, SFX doesn't
+  - `volume` — per-track gain (0–1)
+  - `pitch` + `pitchVariation` — base pitch and random +/- range per sound
+  - `maxConcurrent` — SFX simultaneous-play limit; oldest instance is cut when exceeded
+
+### Changed
+- **PlaySFX concurrency**: Each SFX now tracks its own active instances. Exceeding `maxConcurrent` stops the oldest instance of that sound and plays the new one.
+- **Music volume**: `PlayMusic` now applies the entry's `volume` as the crossfade target instead of always fading to 1.
+
+### Added
+- **Inspector Preview**: Right-click any entry's `clip` field → **Preview** to audition the sound in the editor. Plays through the SFX mixer group when the manager exists, else a one-shot.
+
+### Fixed
+- **ResumeMusic volume**: `FadeInMusic` now fades to the current track's `volume` instead of hardcoded `1f`, so resuming after a pause restores the correct level.
+
 ## [1.0.4] - 2026-07-21
 
 ### Added

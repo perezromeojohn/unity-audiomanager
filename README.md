@@ -29,14 +29,22 @@ Supports background music and sound effects with smooth crossfading, fade in/out
 
 1. In the Unity toolbar, go to **Tools > Rumyoonomicon > Audio Manager** to create an AudioManager GameObject.
 2. In the inspector, configure:
-   - **Background Clips**: List of music tracks.
-   - **Effect Clips**: List of sound effects.
+   - **Background Clips**: List of music entries (each with name, clip, loop, volume, pitch).
+   - **Effect Clips**: List of SFX entries (each with name, clip, loop, volume, pitch, pitch variation, max concurrent).
    - **Music Source**: AudioSource for music.
    - **Audio Mixer**: Controls volume/mute for music and SFX.
    - **Music/SFX Mixer Groups**: Assign mixer groups for routing.
    - **SFX Pool Size**: Number of pooled AudioSources for SFX.
 
-3. Add your audio clips to the lists and assign names for easy reference.
+3. Add your audio clips to the lists and name each entry — you call `PlayMusic("name")` / `PlaySFX("name")` with that name.
+
+   **Per-entry settings:**
+   - `loop` — true for BGM, false for one-shot SFX
+   - `volume` — per-track gain (0–1) that stacks with the global mixer volume
+   - `pitch` — base pitch; `pitchVariation` adds random +/- (great for SFX variety)
+   - `maxConcurrent` (SFX only) — how many instances of this sound can play at once; the oldest is cut to make room
+
+   **Tip:** Right-click any entry's `clip` field → **Preview** to audition the sound right in the Inspector.
 
 ### Example Code
 
@@ -128,6 +136,7 @@ That's it — values survive quit & rejoin.
 * [1.0.2](CHANGELOG.md) - Removed default BGM/SFX
 * [1.0.3](CHANGELOG.md) - Added crossfade and fade in/out for music
 * [1.0.4](CHANGELOG.md) - UI-ready volume/mute properties, bug fixes
+* [1.1.0](CHANGELOG.md) - Per-entry audio settings (loop, volume, pitch, max concurrent)
 
 ## Author
 

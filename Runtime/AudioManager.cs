@@ -6,6 +6,21 @@ using System;
 
 namespace RumyooAudioManager
 {
+    [System.Serializable]
+    public class AudioEntry
+    {
+        public string name;                          // lookup key: PlayMusic("name") / PlaySFX("name")
+        [ContextMenuItem("Preview", "PreviewClip")]
+        public AudioClip clip;
+        public bool loop;                            // BGM: true, SFX: false
+        [Range(0f, 1f)] public float volume = 1f;    // per-track gain
+        [Range(0.1f, 3f)] public float pitch = 1f;   // base pitch
+        [Range(0f, 1f)] public float pitchVariation = 0f; // random +/- range applied to pitch (SFX)
+        [Range(1, 32)] public int maxConcurrent = 10; // SFX: max simultaneous plays; oldest is cut when exceeded
+
+        public void PreviewClip() => AudioManager.PreviewClip(clip, volume);
+    }
+
     public class AudioManager : MonoBehaviour
     {
         private static AudioManager _instance;
@@ -26,8 +41,7 @@ namespace RumyooAudioManager
             }
         }
 
-        // public Sound[] backgroundSound, effectsSound;
-        public AudioClip[] backgroundClips, effectClips;
+        public AudioEntry[] backgroundClips, effectClips;
         public AudioSource musicSource;
         public AudioMixer audioMixer;
         public int SFXPoolValue = 10; // amount of sfx that can be played at the same time, we instantiate them at the start of the game
@@ -36,8 +50,10 @@ namespace RumyooAudioManager
         // music
         private Coroutine musicFadeCoroutine;
         private float _musicVolume = 1f, _sfxVolume = 1f;
+        private float currentTrackVolume = 1f;
 
         private List<AudioSource> sfxPool = new List<AudioSource>();
+        private Dictionary<AudioClip, List<AudioSource>> activeByClip = new Dictionary<AudioClip, List<AudioSource>>();
 
         void Start()
         {
@@ -75,22 +91,24 @@ namespace RumyooAudioManager
 
         public void PlayMusic(string musicName, float musicFadeDuration = 1.5f)
         {
-            AudioClip clip = Array.Find(backgroundClips, c => c.name == musicName);
+            AudioEntry entry = Array.Find(backgroundClips, e => e.name == musicName);
 
-            if (clip == null)
+            if (entry == null || entry.clip == null)
             {
-                Debug.LogWarning("Sound: " + musicName + " not found!");
+                Debug.LogWarning("Music: " + musicName + " not found!");
             }
             else
             {
                 if (musicFadeCoroutine != null)
                     StopCoroutine(musicFadeCoroutine);
 
-                musicFadeCoroutine = StartCoroutine(CrossfadeMusic(clip, musicFadeDuration));
+                musicSource.loop = entry.loop;
+                currentTrackVolume = entry.volume;
+                musicFadeCoroutine = StartCoroutine(CrossfadeMusic(entry.clip, entry.volume, musicFadeDuration));
             }
         }
 
-        private IEnumerator CrossfadeMusic(AudioClip newClip, float duration)
+        private IEnumerator CrossfadeMusic(AudioClip newClip, float targetVolume, float duration)
         {
             if (musicSource.clip == newClip)
                 yield break;
@@ -107,10 +125,10 @@ namespace RumyooAudioManager
 
             for (float t = 0; t < duration; t += Time.unscaledDeltaTime)
             {
-                musicSource.volume = Mathf.Lerp(0, 1f, t / duration);
+                musicSource.volume = Mathf.Lerp(0, targetVolume, t / duration);
                 yield return null;
             }
-            musicSource.volume = 1f;
+            musicSource.volume = targetVolume;
         }
 
         public void PauseMusic(float fadeDuration = 0.5f)
@@ -178,7 +196,7 @@ namespace RumyooAudioManager
 
         private IEnumerator FadeInMusic(float duration)
         {
-            float targetVolume = 1f;
+            float targetVolume = currentTrackVolume;
             musicSource.volume = 0;
             for (float t = 0; t < duration; t += Time.unscaledDeltaTime)
             {
@@ -209,26 +227,71 @@ namespace RumyooAudioManager
 
         public void PlaySFX(string sfxName)
         {
-            AudioClip clip = Array.Find(effectClips, c => c.name == sfxName);
+            AudioEntry entry = Array.Find(effectClips, e => e.name == sfxName);
 
-            if (clip == null)
+            if (entry == null || entry.clip == null)
             {
-                Debug.LogWarning("Sound: " + sfxName + " not found!");
+                Debug.LogWarning("SFX: " + sfxName + " not found!");
+                return;
+            }
+
+            AudioClip clip = entry.clip;
+
+            // prune finished sources so counts stay accurate
+            foreach (var kv in activeByClip)
+                kv.Value.RemoveAll(s => !s.isPlaying || s.clip != kv.Key);
+
+            AudioSource src;
+            if (activeByClip.TryGetValue(clip, out var list) && list.Count >= entry.maxConcurrent)
+            {
+                src = list[0]; // oldest instance of this clip — cut it
+                list.RemoveAt(0);
+                src.Stop();
             }
             else
             {
-                AudioSource freeSource = sfxPool.Find(src => !src.isPlaying);
-                if (freeSource == null)
-                {
-                    freeSource = sfxPool[0];
-                }
-                freeSource.clip = clip;
-                freeSource.pitch = UnityEngine.Random.Range(.85f, 1.15f);
-                freeSource.Play();
+                src = sfxPool.Find(s => !s.isPlaying);
+                if (src == null)
+                    src = sfxPool[0]; // pool exhausted — steal oldest overall
             }
+
+            src.clip = clip;
+            src.volume = entry.volume;
+            src.pitch = entry.pitch * UnityEngine.Random.Range(1f - entry.pitchVariation, 1f + entry.pitchVariation);
+            src.loop = entry.loop;
+            src.Play();
+
+            if (!activeByClip.TryGetValue(clip, out list))
+            {
+                list = new List<AudioSource>();
+                activeByClip[clip] = list;
+            }
+            list.Add(src);
         }
 
         // SFX stuff
+
+        // editor/play preview — plays through the SFX mixer group if the manager exists, else a one-shot
+        public static void PreviewClip(AudioClip clip, float volume = 1f)
+        {
+            if (clip == null) return;
+
+            if (_instance != null)
+            {
+                AudioSource src = _instance.sfxPool.Find(s => !s.isPlaying);
+                if (src != null)
+                {
+                    src.clip = clip;
+                    src.volume = volume;
+                    src.pitch = 1f;
+                    src.loop = false;
+                    src.Play();
+                    return;
+                }
+            }
+            AudioSource.PlayClipAtPoint(clip, Vector3.zero, volume);
+        }
+
         public void SetMusicVolume(float volume)
         {
             _musicVolume = volume;
