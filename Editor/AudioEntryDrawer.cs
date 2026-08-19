@@ -3,51 +3,69 @@ using UnityEngine;
 
 namespace RumyooAudioManager
 {
+    /// <summary>
+    /// Shared drawing routines for <see cref="AudioEntry"/> so the PropertyDrawer and the
+    /// inspector's ReorderableLists render identically.
+    /// BGM entries get a slim layout (pitch/variation/maxConcurrent are SFX-only at runtime).
+    /// </summary>
+    public static class AudioEntryGUI
+    {
+        public static float GetHeight(bool sfx)
+        {
+            int rows = sfx ? 7 : 4;
+            return EditorGUIUtility.singleLineHeight * rows + EditorGUIUtility.standardVerticalSpacing * (rows - 1);
+        }
+
+        public static void Draw(Rect position, SerializedProperty property, bool sfx)
+        {
+            float line = EditorGUIUtility.singleLineHeight;
+            float gap = EditorGUIUtility.standardVerticalSpacing;
+            Rect rect = new Rect(position.x, position.y, position.width, line);
+
+            // Row: Name
+            EditorGUI.PropertyField(rect, property.FindPropertyRelative("name"), new GUIContent("Name"));
+            rect.y += line + gap;
+
+            // Row: Clip
+            EditorGUI.PropertyField(rect, property.FindPropertyRelative("clip"), new GUIContent("Clip"));
+            rect.y += line + gap;
+
+            // Row: Loop
+            EditorGUI.PropertyField(rect, property.FindPropertyRelative("loop"), new GUIContent("Loop"));
+            rect.y += line + gap;
+
+            // Row: Volume
+            EditorGUI.PropertyField(rect, property.FindPropertyRelative("volume"), new GUIContent("Volume"));
+            rect.y += line + gap;
+
+            if (!sfx) return; // music ignores pitch / variation / maxConcurrent at runtime
+
+            // Row: Pitch
+            EditorGUI.PropertyField(rect, property.FindPropertyRelative("pitch"), new GUIContent("Pitch"));
+            rect.y += line + gap;
+
+            // Row: ± Variation
+            EditorGUI.PropertyField(rect, property.FindPropertyRelative("pitchVariation"),
+                new GUIContent("± Variation", "Random +/- pitch deviation applied on each play"));
+            rect.y += line + gap;
+
+            // Row: Max Concurrent
+            EditorGUI.PropertyField(rect, property.FindPropertyRelative("maxConcurrent"), new GUIContent("Max Concurrent"));
+        }
+    }
+
     [CustomPropertyDrawer(typeof(AudioEntry))]
     public class AudioEntryDrawer : PropertyDrawer
     {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return EditorGUIUtility.singleLineHeight * 5 + EditorGUIUtility.standardVerticalSpacing * 4;
+            return AudioEntryGUI.GetHeight(true);
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             EditorGUI.BeginProperty(position, label, property);
-
-            float line = EditorGUIUtility.singleLineHeight;
-            float gap = EditorGUIUtility.standardVerticalSpacing;
-            Rect rect = new Rect(position.x, position.y, position.width, line);
-
-            EditorGUI.PropertyField(rect, property.FindPropertyRelative("name"), new GUIContent("Name"));
-            rect.y += line + gap;
-
-            // Clip + Preview button
-            SerializedProperty clipProp = property.FindPropertyRelative("clip");
-            Rect clipRect = new Rect(rect.x, rect.y, position.width - 70f, line);
-            EditorGUI.PropertyField(clipRect, clipProp, new GUIContent("Clip"));
-            if (GUI.Button(new Rect(rect.x + position.width - 65f, rect.y, 65f, line), "Preview"))
-            {
-                AudioClip clip = (AudioClip)clipProp.objectReferenceValue;
-                if (clip != null)
-                    AudioManager.PreviewClip(clip, property.FindPropertyRelative("volume").floatValue);
-            }
-            rect.y += line + gap;
-
-            // Loop + Volume
-            SerializedProperty loopProp = property.FindPropertyRelative("loop");
-            EditorGUI.PropertyField(new Rect(rect.x, rect.y, 100f, line), loopProp, new GUIContent("Loop"));
-            EditorGUI.PropertyField(new Rect(rect.x + 110f, rect.y, position.width - 110f, line), property.FindPropertyRelative("volume"), new GUIContent("Volume"));
-            rect.y += line + gap;
-
-            // Pitch + variation
-            EditorGUI.PropertyField(new Rect(rect.x, rect.y, 90f, line), property.FindPropertyRelative("pitch"), new GUIContent("Pitch"));
-            EditorGUI.PropertyField(new Rect(rect.x + 110f, rect.y, position.width - 110f, line), property.FindPropertyRelative("pitchVariation"), new GUIContent("± Variation"));
-            rect.y += line + gap;
-
-            // Max concurrent
-            EditorGUI.PropertyField(rect, property.FindPropertyRelative("maxConcurrent"), new GUIContent("Max Concurrent"));
-
+            AudioEntryGUI.Draw(position, property, true);
             EditorGUI.EndProperty();
         }
     }

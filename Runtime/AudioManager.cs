@@ -27,7 +27,7 @@ namespace RumyooAudioManager
             {
                 if (_instance == null)
                 {
-                    _instance = FindObjectOfType<AudioManager>();
+                    _instance = FindFirstObjectByType<AudioManager>();
                     if (_instance == null)
                     {
                         GameObject go = new GameObject("AudioManager");
@@ -267,27 +267,6 @@ namespace RumyooAudioManager
         }
 
         // SFX stuff
-
-        // editor/play preview — plays through the SFX mixer group if the manager exists, else a one-shot
-        public static void PreviewClip(AudioClip clip, float volume = 1f)
-        {
-            if (clip == null) return;
-
-            if (_instance != null)
-            {
-                AudioSource src = _instance.sfxPool.Find(s => !s.isPlaying);
-                if (src != null)
-                {
-                    src.clip = clip;
-                    src.volume = volume;
-                    src.pitch = 1f;
-                    src.loop = false;
-                    src.Play();
-                    return;
-                }
-            }
-            AudioSource.PlayClipAtPoint(clip, Vector3.zero, volume);
-        }
 
         public void SetMusicVolume(float volume)
         {

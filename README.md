@@ -44,8 +44,6 @@ Supports background music and sound effects with smooth crossfading, fade in/out
    - `pitch` — base pitch; `pitchVariation` adds random +/- (great for SFX variety)
    - `maxConcurrent` (SFX only) — how many instances of this sound can play at once; the oldest is cut to make room
 
-   **Tip:** Right-click any entry's `clip` field → **Preview** to audition the sound right in the Inspector.
-
 ### Example Code
 
 ```csharp

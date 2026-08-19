@@ -1,6 +1,6 @@
 {
     "name": "com.rumyoonomicon.audiomanager",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "displayName": "Rumyoonomicon AudioManager",
     "description": "A simple audio manager that uses object pooling to manage audio sources efficiently. It allows you to play, stop, and manage audio clips easily without creating and destroying audio sources frequently.",
     "unity": "2022.1",

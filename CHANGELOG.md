@@ -4,6 +4,23 @@ All notable changes to the Rumyoonomicon AudioManager will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2026-08-20
+
+### Added
+- **"Muted Pro" Inspector Theme**: Dark slate section banners with colored accent bars and icons — violet ♫ `Background Music`, amber ⚡ `Sound Effects`, slate ⚙ `Output & Routing` — plus live entry-count badges. Works in both Pro and Personal skins, replacing the old flat light-blue/pink headers.
+- **Reorderable Clip Lists**: `backgroundClips`/`effectClips` now render as reorderable lists with drag-reordering and dedicated +/− buttons.
+- **Contextual Entry Layouts**: Music entries show only `Name`/`Clip`/`Loop`/`Volume` (pitch, variation and maxConcurrent have no effect on music at runtime); SFX entries keep the full set, with a tooltipped `± Variation` row.
+
+### Changed
+- **Loop on Its Own Row**: The `loop` toggle is no longer squeezed next to the Volume slider — both get their own full-width row.
+
+### Removed
+- **Inspector Preview**: Preview button and the `AudioManager.PreviewClip` API removed entirely.
+
+### Fixed
+- **Ghost Duplicate Entries**: The settings iterator used `NextVisible(true)`, which dove into the clip arrays and re-drew array `Size` fields and duplicate entries (with synced duplicate Variation sliders) beneath the routing fields. Only top-level fields render once now, and `m_Script` is hidden.
+- **+/− Button Overlap**: List footers reserve space so the add/remove buttons no longer paint over the next section.
+
 ## [1.1.1] - 2026-08-19
 
 ### Added
