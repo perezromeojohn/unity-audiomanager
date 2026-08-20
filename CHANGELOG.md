@@ -4,12 +4,14 @@ All notable changes to the Rumyoonomicon AudioManager will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.2] - 2026-08-20
+## [1.1.3] - 2026-08-20
 
 ### Added
 - **"Muted Pro" Inspector Theme**: Dark slate section banners with colored accent bars and icons — violet ♫ `Background Music`, amber ⚡ `Sound Effects`, slate ⚙ `Output & Routing` — plus live entry-count badges. Works in both Pro and Personal skins, replacing the old flat light-blue/pink headers.
 - **Reorderable Clip Lists**: `backgroundClips`/`effectClips` now render as reorderable lists with drag-reordering and dedicated +/− buttons.
 - **Contextual Entry Layouts**: Music entries show only `Name`/`Clip`/`Loop`/`Volume` (pitch, variation and maxConcurrent have no effect on music at runtime); SFX entries keep the full set, with a tooltipped `± Variation` row.
+- **Collapsible Entries**: Every entry now has a foldout header — titled with the entry name, clip name shown at the right — so long lists can be collapsed and scanned like a proper list. Newly added entries open expanded.
+- **Section-Level Foldouts**: The `Background Music` / `Sound Effects` banners are now master foldouts — collapse an entire list (even with collapsed children it stays out of the way on SFX-heavy projects). State persists via EditorPrefs.
 
 ### Changed
 - **Loop on Its Own Row**: The `loop` toggle is no longer squeezed next to the Volume slider — both get their own full-width row.
@@ -20,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **Ghost Duplicate Entries**: The settings iterator used `NextVisible(true)`, which dove into the clip arrays and re-drew array `Size` fields and duplicate entries (with synced duplicate Variation sliders) beneath the routing fields. Only top-level fields render once now, and `m_Script` is hidden.
 - **+/− Button Overlap**: List footers reserve space so the add/remove buttons no longer paint over the next section.
+- **Handle Spacing**: Entry foldout triangles now keep clear of the drag-reorder handle with an extra left inset.
 
 ## [1.1.1] - 2026-08-19
 

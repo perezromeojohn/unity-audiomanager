@@ -10,10 +10,28 @@ namespace RumyooAudioManager
     /// </summary>
     public static class AudioEntryGUI
     {
-        public static float GetHeight(bool sfx)
+        public static float GetHeight(bool sfx, bool expanded)
         {
+            float line = EditorGUIUtility.singleLineHeight;
+            float gap = EditorGUIUtility.standardVerticalSpacing;
+            if (!expanded) return line;
             int rows = sfx ? 7 : 4;
-            return EditorGUIUtility.singleLineHeight * rows + EditorGUIUtility.standardVerticalSpacing * (rows - 1);
+            return line + gap + line * rows + gap * (rows - 1);
+        }
+
+        public static float GetHeight(SerializedProperty property, bool sfx)
+        {
+            return GetHeight(sfx, property.isExpanded);
+        }
+
+        private static int GetIndex(SerializedProperty property)
+        {
+            string path = property.propertyPath;
+            int start = path.LastIndexOf('[');
+            int end = path.LastIndexOf(']');
+            if (start >= 0 && end > start && int.TryParse(path.Substring(start + 1, end - start - 1), out int index))
+                return index;
+            return -1;
         }
 
         public static void Draw(Rect position, SerializedProperty property, bool sfx)
@@ -21,6 +39,25 @@ namespace RumyooAudioManager
             float line = EditorGUIUtility.singleLineHeight;
             float gap = EditorGUIUtility.standardVerticalSpacing;
             Rect rect = new Rect(position.x, position.y, position.width, line);
+
+            // Header: collapsible foldout titled with the entry name
+            string title = property.FindPropertyRelative("name").stringValue;
+            if (string.IsNullOrEmpty(title))
+            {
+                int index = GetIndex(property);
+                title = index >= 0 ? "Entry " + (index + 1) : "Entry";
+            }
+            property.isExpanded = EditorGUI.Foldout(rect, property.isExpanded, title, true);
+
+            AudioClip clip = property.FindPropertyRelative("clip").objectReferenceValue as AudioClip;
+            if (clip != null)
+            {
+                GUIStyle clipStyle = new GUIStyle(EditorStyles.miniLabel) { alignment = TextAnchor.MiddleRight };
+                GUI.Label(new Rect(rect.x + rect.width * 0.5f, rect.y, rect.width * 0.5f, line), clip.name, clipStyle);
+            }
+
+            if (!property.isExpanded) return;
+            rect.y += line + gap;
 
             // Row: Name
             EditorGUI.PropertyField(rect, property.FindPropertyRelative("name"), new GUIContent("Name"));
@@ -59,7 +96,7 @@ namespace RumyooAudioManager
     {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return AudioEntryGUI.GetHeight(true);
+            return AudioEntryGUI.GetHeight(property, true);
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
